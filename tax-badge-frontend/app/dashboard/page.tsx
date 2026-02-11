@@ -12,6 +12,13 @@ type Submission = {
   admin_comment?: string | null;
 };
 
+type ApprovedBadge = {
+  submission_id: number;
+  badge_id: string;
+  financial_year: string;
+  badge_name: string;
+};
+
 function normalizeSubmissionsResponse(data: unknown): Submission[] {
   if (Array.isArray(data)) return data;
 
@@ -42,6 +49,7 @@ function normalizeSubmissionsResponse(data: unknown): Submission[] {
 
 export default function DashboardPage() {
   const [subs, setSubs] = useState<Submission[]>([]);
+  const [approvedBadges, setApprovedBadges] = useState<ApprovedBadge[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -65,7 +73,17 @@ export default function DashboardPage() {
       setSubs([]);
     };
 
+    const loadBadges = async () => {
+      try {
+        const data = await apiFetch("/submission/my-badges");
+        setApprovedBadges(Array.isArray(data) ? data : []);
+      } catch {
+        setApprovedBadges([]);
+      }
+    };
+
     loadSubmissions();
+    loadBadges();
   }, []);
 
   const safeSubs = useMemo(() => (Array.isArray(subs) ? subs : []), [subs]);
@@ -85,6 +103,7 @@ export default function DashboardPage() {
           <div key={s.id ?? `${s.financial_year ?? "submission"}-${index}`} className="card mb-4">
             <p>FY: {s.financial_year ?? "-"}</p>
             <p>Status: {s.status ?? "-"}</p>
+            {s.admin_comment && <p>Admin comment: {s.admin_comment}</p>}
             {s.badge_id && (
               <>
                 <p>Badge ID: {s.badge_id}</p>
@@ -96,6 +115,23 @@ export default function DashboardPage() {
             )}
           </div>
         ))}
+
+        <h2 className="text-xl mt-8 mb-4">All Approved Badges</h2>
+        {approvedBadges.length === 0 ? (
+          <p className="text-slate-300">No approved badges yet.</p>
+        ) : (
+          approvedBadges.map((badge) => (
+            <div key={badge.submission_id} className="card mb-3">
+              <p>FY: {badge.financial_year}</p>
+              <p>Badge Tier: {badge.badge_name}</p>
+              <p>Badge ID: {badge.badge_id}</p>
+              <div className="mt-2 flex gap-2">
+                <a className="btn" href={`/verify?badge=${badge.badge_id}`}>Verify</a>
+                <a className="btn" href={`/download?badge=${badge.badge_id}`}>Download</a>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </ProtectedRoute>
   );

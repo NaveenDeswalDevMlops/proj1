@@ -1,5 +1,11 @@
 import { apiFetch } from "./api";
 
+function notifyAuthChanged() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event("auth-changed"));
+  }
+}
+
 export async function signup(email: string, password: string) {
   return apiFetch("/auth/signup", {
     method: "POST",
@@ -16,6 +22,7 @@ export async function login(email: string, password: string) {
   localStorage.setItem("access_token", res.access_token);
   localStorage.setItem("user_email", res.user.email);
   localStorage.setItem("is_admin", String(Boolean(res.user.is_admin)));
+  notifyAuthChanged();
 
   return res;
 }
@@ -24,6 +31,7 @@ export function logout() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("user_email");
   localStorage.removeItem("is_admin");
+  notifyAuthChanged();
 }
 
 export function isLoggedIn(): boolean {

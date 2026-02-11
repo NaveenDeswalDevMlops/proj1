@@ -28,6 +28,7 @@ class TaxSubmissionResponse(BaseModel):
     badge_name: str | None
     status: str
     badge_id: str | None = None
+    admin_comment: str | None = None
 
     class Config:
         from_attributes = True
