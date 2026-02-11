@@ -16,6 +16,16 @@ function normalizeSubmissionsResponse(data: unknown): Submission[] {
 
   if (!data || typeof data !== "object") return [];
 
+  const singleSubmission = data as Submission;
+  if (
+    "financial_year" in singleSubmission ||
+    "status" in singleSubmission ||
+    "badge_id" in singleSubmission ||
+    "id" in singleSubmission
+  ) {
+    return [singleSubmission];
+  }
+
   const payload = data as {
     submissions?: unknown;
     items?: unknown;
