@@ -1,58 +1,53 @@
 from fastapi import FastAPI
-from app.api import badge
-from app.api import verify
 from fastapi.middleware.cors import CORSMiddleware
-# -----------------------------
-# Database
-# -----------------------------
-from app.core.database import Base, engine
+from sqlalchemy import text
 
-# -----------------------------
-# Models (force table creation)
-# -----------------------------
+from app.core.database import Base, engine
 from app.models.user import User
 from app.models.submission import TaxSubmission
+from app.api import auth, submission, admin, verify, badge
 
-# -----------------------------
-# Routers
-# -----------------------------
-from app.api import auth, submission, admin, verify
 
-# -----------------------------
-# Create DB tables
-# -----------------------------
+def _ensure_schema_updates() -> None:
+    with engine.connect() as conn:
+        columns = {
+            row[1]
+            for row in conn.execute(text("PRAGMA table_info(tax_submissions)")).fetchall()
+        }
+
+        if "admin_comment" not in columns:
+            conn.execute(text("ALTER TABLE tax_submissions ADD COLUMN admin_comment VARCHAR"))
+
+        if "badge_generated_at" not in columns:
+            conn.execute(text("ALTER TABLE tax_submissions ADD COLUMN badge_generated_at DATE"))
+
+        conn.commit()
+
+
 Base.metadata.create_all(bind=engine)
+_ensure_schema_updates()
 
-# -----------------------------
-# Create FastAPI app FIRST
-# -----------------------------
 app = FastAPI(
     title="Nation Builder Badge",
     description="Voluntary civic badge for Indian taxpayers",
-    version="0.1.0"
+    version="0.1.0",
 )
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",   # Next.js frontend
-        "http://127.0.0.1:3000"
-    ],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# -----------------------------
-# Register routers AFTER app exists
-# -----------------------------
 app.include_router(auth.router)
 app.include_router(submission.router)
 app.include_router(admin.router)
 app.include_router(verify.router)
 app.include_router(badge.router)
-# -----------------------------
-# Health check
-# -----------------------------
+
+
 @app.get("/")
 def home():
-    return {"message": "Nation Builder Badge API is running "}
+    return {"message": "Nation Builder Badge API is running"}

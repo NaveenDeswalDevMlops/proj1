@@ -8,26 +8,15 @@ from app.models.submission import TaxSubmission
 from app.models.schemas import TaxSubmissionCreate, TaxSubmissionResponse
 from app.services.badge_service import get_badge_for_tax
 
-router = APIRouter(
-    prefix="/submission",
-    tags=["Tax Submission"]
-)
+router = APIRouter(prefix="/submission", tags=["Tax Submission"])
 
 
-# -------------------------------------------------
-# Submit tax details (CREATE)
-# -------------------------------------------------
 @router.post("/", response_model=TaxSubmissionResponse)
 def submit_tax(
     submission: TaxSubmissionCreate,
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    """
-    Submit tax details for the authenticated user.
-    User identity is derived from JWT token.
-    """
-
     badge = get_badge_for_tax(submission.tax_paid)
 
     new_submission = TaxSubmission(
@@ -35,7 +24,7 @@ def submit_tax(
         financial_year=submission.financial_year,
         tax_paid=submission.tax_paid,
         badge_name=badge,
-        status="PENDING"
+        status="PENDING",
     )
 
     db.add(new_submission)
@@ -45,19 +34,11 @@ def submit_tax(
     return new_submission
 
 
-# -------------------------------------------------
-# Get current user's latest submission (READ)
-# -------------------------------------------------
 @router.get("/me", response_model=TaxSubmissionResponse | None)
-def get_my_submission(
+def get_my_latest_submission(
     current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    """
-    Fetch the latest tax submission of the authenticated user.
-    Returns null if no submission exists.
-    """
-
     submission = (
         db.query(TaxSubmission)
         .filter(TaxSubmission.user_id == current_user.id)
@@ -66,3 +47,43 @@ def get_my_submission(
     )
 
     return submission
+
+
+@router.get("/mine", response_model=list[TaxSubmissionResponse])
+def get_my_submissions(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return (
+        db.query(TaxSubmission)
+        .filter(TaxSubmission.user_id == current_user.id)
+        .order_by(TaxSubmission.id.desc())
+        .all()
+    )
+
+
+@router.get("/my-badges")
+def get_my_badges(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    submissions = (
+        db.query(TaxSubmission)
+        .filter(
+            TaxSubmission.user_id == current_user.id,
+            TaxSubmission.status == "APPROVED",
+            TaxSubmission.badge_id.isnot(None),
+        )
+        .order_by(TaxSubmission.id.desc())
+        .all()
+    )
+
+    return [
+        {
+            "submission_id": submission.id,
+            "badge_id": submission.badge_id,
+            "financial_year": submission.financial_year,
+            "badge_name": submission.badge_name,
+        }
+        for submission in submissions
+    ]
