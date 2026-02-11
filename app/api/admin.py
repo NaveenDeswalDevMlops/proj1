@@ -3,7 +3,6 @@ import os
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -12,20 +11,14 @@ from app.models.submission import TaxSubmission
 from app.models.user import User
 from app.models.schemas import AdminSubmissionCreate
 from app.services.badge_service import get_badge_for_tax
-from app.services.badge_generator import generate_badge
-from app.services.badge_pdf import generate_badge_pdf
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
-
-
-class RejectSubmissionRequest(BaseModel):
-    comment: str
 
 
 @router.get("/submissions")
 def list_all_submissions(
     db: Session = Depends(get_db),
-    admin=Depends(require_admin),
+    admin=Depends(require_admin)
 ):
     submissions = (
         db.query(TaxSubmission, User.email)
@@ -45,55 +38,23 @@ def list_all_submissions(
             "status": submission.status,
             "badge_id": submission.badge_id,
             "badge_expires_at": submission.badge_expires_at,
-            "badge_generated_at": submission.badge_generated_at,
-            "admin_comment": submission.admin_comment,
         }
         for submission, email in submissions
     ]
-
-
-@router.get("/stats")
-def admin_stats(
-    db: Session = Depends(get_db),
-    admin=Depends(require_admin),
-):
-    all_subs = db.query(TaxSubmission).all()
-    today = date.today()
-
-    generated = sum(1 for s in all_subs if s.status == "APPROVED")
-    pending = sum(1 for s in all_subs if s.status == "PENDING")
-    rejected = sum(1 for s in all_subs if s.status == "REJECTED")
-    invalidated = sum(1 for s in all_subs if s.status == "INVALIDATED")
-    expired = sum(
-        1
-        for s in all_subs
-        if s.status == "APPROVED"
-        and s.badge_expires_at is not None
-        and s.badge_expires_at < today
-    )
-
-    return {
-        "total_submissions": int(len(all_subs)),
-        "generated_badges": generated,
-        "pending_badges": pending,
-        "rejected_requests": rejected,
-        "invalidated_badges": invalidated,
-        "expired_badges": expired,
-    }
 
 
 @router.post("/submit-for-user")
 def submit_for_user(
     payload: AdminSubmissionCreate,
     db: Session = Depends(get_db),
-    admin=Depends(require_admin),
+    admin=Depends(require_admin)
 ):
     user = db.query(User).filter(User.email == payload.user_email).first()
 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
+            detail="User not found"
         )
 
     submission = TaxSubmission(
@@ -101,7 +62,7 @@ def submit_for_user(
         financial_year=payload.financial_year,
         tax_paid=payload.tax_paid,
         badge_name=get_badge_for_tax(payload.tax_paid),
-        status="PENDING",
+        status="PENDING"
     )
 
     db.add(submission)

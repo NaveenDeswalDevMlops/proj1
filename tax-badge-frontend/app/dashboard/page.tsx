@@ -85,7 +85,6 @@ export default function DashboardPage() {
           <div key={s.id ?? `${s.financial_year ?? "submission"}-${index}`} className="card mb-4">
             <p>FY: {s.financial_year ?? "-"}</p>
             <p>Status: {s.status ?? "-"}</p>
-            {s.admin_comment && <p>Admin comment: {s.admin_comment}</p>}
             {s.badge_id && (
               <>
                 <p>Badge ID: {s.badge_id}</p>
