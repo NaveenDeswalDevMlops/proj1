@@ -73,7 +73,7 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <div className="p-6">
-        <h1 className="text-2xl mb-4">My Submissions</h1>
+        <h1 className="text-2xl mb-4">My Submission History</h1>
 
         {error && <p className="mb-4 text-red-300">{error}</p>}
 

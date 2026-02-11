@@ -8,8 +8,15 @@ export default function Navbar() {
   const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
-    setLoggedIn(isLoggedIn());
-    setAdmin(isAdmin());
+    const syncAuthState = () => {
+      setLoggedIn(isLoggedIn());
+      setAdmin(isAdmin());
+    };
+
+    syncAuthState();
+    window.addEventListener("storage", syncAuthState);
+
+    return () => window.removeEventListener("storage", syncAuthState);
   }, []);
 
   return (

@@ -68,7 +68,7 @@ def admin_stats(
     )
 
     return {
-        "total_submissions": len(all_subs),
+        "total_submissions": int(len(all_subs)),
         "generated_badges": generated,
         "pending_badges": pending,
         "rejected_requests": rejected,

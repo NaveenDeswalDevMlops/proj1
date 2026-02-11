@@ -39,6 +39,7 @@ export default function VerifyPage() {
     <ProtectedRoute>
       <div className="max-w-xl mx-auto mt-10">
         <h1 className="text-2xl mb-4">Verify Badge</h1>
+        <p className="text-slate-300 mb-3">Enter a badge ID to validate it.</p>
         <input
           className="input"
           placeholder="Enter badge ID"

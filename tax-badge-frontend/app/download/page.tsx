@@ -75,7 +75,7 @@ export default function DownloadPage() {
           <p className="text-slate-300">No approved badges available yet.</p>
         ) : (
           <>
-            <label className="block mb-1">Select Badge ID</label>
+            <label className="block mb-1">Select your Badge ID</label>
             <select className="input" value={badgeId} onChange={(e) => setBadgeId(e.target.value)}>
               {badges.map((badge) => (
                 <option key={badge.submission_id} value={badge.badge_id}>
