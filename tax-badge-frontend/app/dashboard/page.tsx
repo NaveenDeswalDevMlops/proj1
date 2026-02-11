@@ -30,7 +30,7 @@ function normalizeSubmissionsResponse(data: unknown): Submission[] {
 }
 
 export default function DashboardPage() {
-  const [subs, setSubs] = useState<Submission[]>([]);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function DashboardPage() {
       for (const path of candidatePaths) {
         try {
           const data = await apiFetch(path);
-          setSubs(normalizeSubmissionsResponse(data));
+
           setError("");
           return;
         } catch (e: any) {
@@ -56,7 +56,7 @@ export default function DashboardPage() {
       }
 
       setError("No compatible submissions endpoint found on backend.");
-      setSubs([]);
+
     };
 
     loadSubmissions();
@@ -71,14 +71,7 @@ export default function DashboardPage() {
 
         {error && <p className="mb-4 text-red-300">{error}</p>}
 
-        {!error && safeSubs.length === 0 && (
-          <p className="mb-4 text-slate-300">No submissions available yet.</p>
-        )}
 
-        {safeSubs.map((s, index) => (
-          <div key={s.id ?? `${s.financial_year ?? "submission"}-${index}`} className="card mb-4">
-            <p>FY: {s.financial_year ?? "-"}</p>
-            <p>Status: {s.status ?? "-"}</p>
             {s.badge_id && <p>Badge ID: {s.badge_id}</p>}
           </div>
         ))}
