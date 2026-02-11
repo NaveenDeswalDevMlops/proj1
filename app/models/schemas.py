@@ -22,6 +22,13 @@ class TaxSubmissionResponse(BaseModel):
     tax_paid: int
     badge_name: str | None
     status: str
+    badge_id: str | None = None
 
     class Config:
         orm_mode = True
+
+
+class AdminSubmissionCreate(BaseModel):
+    user_email: EmailStr
+    financial_year: str
+    tax_paid: int

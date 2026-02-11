@@ -89,7 +89,15 @@ export default function DashboardPage() {
           <div key={s.id ?? `${s.financial_year ?? "submission"}-${index}`} className="card mb-4">
             <p>FY: {s.financial_year ?? "-"}</p>
             <p>Status: {s.status ?? "-"}</p>
-            {s.badge_id && <p>Badge ID: {s.badge_id}</p>}
+            {s.badge_id && (
+              <>
+                <p>Badge ID: {s.badge_id}</p>
+                <div className="mt-2 flex gap-2">
+                  <a className="btn" href={`/verify?badge=${s.badge_id}`}>Verify</a>
+                  <a className="btn" href={`/download?badge=${s.badge_id}`}>Download</a>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>

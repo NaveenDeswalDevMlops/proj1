@@ -6,8 +6,73 @@ import uuid
 from app.core.database import get_db
 from app.core.admin import require_admin
 from app.models.submission import TaxSubmission
+from app.models.user import User
+from app.models.schemas import AdminSubmissionCreate
+from app.services.badge_service import get_badge_for_tax
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
+
+
+@router.get("/submissions")
+def list_all_submissions(
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    submissions = (
+        db.query(TaxSubmission, User.email)
+        .join(User, User.id == TaxSubmission.user_id)
+        .order_by(TaxSubmission.id.desc())
+        .all()
+    )
+
+    return [
+        {
+            "id": submission.id,
+            "user_id": submission.user_id,
+            "user_email": email,
+            "financial_year": submission.financial_year,
+            "tax_paid": submission.tax_paid,
+            "badge_name": submission.badge_name,
+            "status": submission.status,
+            "badge_id": submission.badge_id,
+            "badge_expires_at": submission.badge_expires_at,
+        }
+        for submission, email in submissions
+    ]
+
+
+@router.post("/submit-for-user")
+def submit_for_user(
+    payload: AdminSubmissionCreate,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    user = db.query(User).filter(User.email == payload.user_email).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    submission = TaxSubmission(
+        user_id=user.id,
+        financial_year=payload.financial_year,
+        tax_paid=payload.tax_paid,
+        badge_name=get_badge_for_tax(payload.tax_paid),
+        status="PENDING"
+    )
+
+    db.add(submission)
+    db.commit()
+    db.refresh(submission)
+
+    return {
+        "message": "Submission created for user",
+        "submission_id": submission.id,
+        "user_id": user.id,
+        "user_email": user.email,
+    }
 
 
 @router.post("/approve/{submission_id}")
