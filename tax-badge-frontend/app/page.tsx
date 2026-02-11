@@ -11,7 +11,7 @@ export default function Home() {
         <a href="/signup" className="px-6 py-3 bg-yellow-400 text-black font-semibold rounded-lg">
           Get Started
         </a>
-        <a href="/verify" className="px-6 py-3 border border-slate-700 rounded-lg">
+        <a href="/login?next=%2Fverify" className="px-6 py-3 border border-slate-700 rounded-lg">
           Verify Badge
         </a>
       </div>

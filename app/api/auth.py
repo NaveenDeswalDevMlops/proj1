@@ -7,6 +7,7 @@ from passlib.context import CryptContext
 from app.core.database import get_db
 from app.models.user import User
 from app.models.schemas import UserCreate, UserResponse
+from app.core.admin import is_admin_email
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -60,6 +61,7 @@ def login(user: UserCreate, db: Session = Depends(get_db)):
         "token_type": "bearer",
         "user": {
             "id": db_user.id,
-            "email": db_user.email
+            "email": db_user.email,
+            "is_admin": is_admin_email(db_user.email)
         }
     }
