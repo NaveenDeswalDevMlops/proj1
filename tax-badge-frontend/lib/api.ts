@@ -20,11 +20,16 @@ export async function apiFetch(
   });
 
   if (!res.ok) {
-    let err;
+    let err: any;
     try {
       err = await res.json();
     } catch {
-      throw new Error("API error");
+      const unknownError = new Error("API error") as Error & { status?: number };
+      unknownError.status = res.status;
+      throw unknownError;
+    }
+    if (typeof err === "object" && err !== null) {
+      err.status = res.status;
     }
     throw err;
   }
