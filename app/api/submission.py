@@ -8,9 +8,15 @@ from app.models.submission import TaxSubmission
 from app.models.schemas import TaxSubmissionCreate, TaxSubmissionResponse
 from app.services.badge_service import get_badge_for_tax
 
-router = APIRouter(prefix="/submission", tags=["Tax Submission"])
+router = APIRouter(
+    prefix="/submission",
+    tags=["Tax Submission"]
+)
 
 
+# -------------------------------------------------
+# Submit tax details (CREATE)
+# -------------------------------------------------
 @router.post("/", response_model=TaxSubmissionResponse)
 def submit_tax(
     submission: TaxSubmissionCreate,
@@ -37,3 +43,26 @@ def submit_tax(
     db.refresh(new_submission)
 
     return new_submission
+
+
+# -------------------------------------------------
+# Get current user's latest submission (READ)
+# -------------------------------------------------
+@router.get("/me", response_model=TaxSubmissionResponse | None)
+def get_my_submission(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Fetch the latest tax submission of the authenticated user.
+    Returns null if no submission exists.
+    """
+
+    submission = (
+        db.query(TaxSubmission)
+        .filter(TaxSubmission.user_id == current_user.id)
+        .order_by(TaxSubmission.id.desc())
+        .first()
+    )
+
+    return submission
