@@ -1,8 +1,11 @@
+from datetime import date
 from pydantic import BaseModel, EmailStr
+
 
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+
 
 class UserResponse(BaseModel):
     id: int
@@ -12,9 +15,11 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
 class TaxSubmissionCreate(BaseModel):
     financial_year: str
     tax_paid: int
+
 
 class TaxSubmissionResponse(BaseModel):
     id: int

@@ -1,13 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { isLoggedIn } from "@/lib/auth";
+import { isAdmin, isLoggedIn } from "@/lib/auth";
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
-    setLoggedIn(isLoggedIn());
+    const syncAuthState = () => {
+      setLoggedIn(isLoggedIn());
+      setAdmin(isAdmin());
+    };
+
+    syncAuthState();
+    window.addEventListener("storage", syncAuthState);
+
+    return () => window.removeEventListener("storage", syncAuthState);
   }, []);
 
   return (

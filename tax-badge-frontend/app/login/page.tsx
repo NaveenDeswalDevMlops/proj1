@@ -13,7 +13,9 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       await login(email, password);
-      router.push("/dashboard");
+      const params = new URLSearchParams(window.location.search);
+      const nextPath = params.get("next") || "/dashboard";
+      router.push(nextPath);
     } catch (e: any) {
       alert(e.detail || "Login failed");
     }

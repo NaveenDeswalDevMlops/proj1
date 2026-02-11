@@ -9,6 +9,7 @@ type Submission = {
   financial_year?: string;
   status?: string;
   badge_id?: string | number | null;
+  admin_comment?: string | null;
 };
 
 function normalizeSubmissionsResponse(data: unknown): Submission[] {
@@ -45,12 +46,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const loadSubmissions = async () => {
-      const candidatePaths = [
-        "/submission/me",
-        "/submission/my",
-        "/submission/mine",
-        "/submission/",
-      ];
+      const candidatePaths = ["/submission/mine", "/submission/me"];
 
       for (const path of candidatePaths) {
         try {
@@ -77,7 +73,7 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <div className="p-6">
-        <h1 className="text-2xl mb-4">My Submissions</h1>
+        <h1 className="text-2xl mb-4">My Submission History</h1>
 
         {error && <p className="mb-4 text-red-300">{error}</p>}
 
