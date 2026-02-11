@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 35%),
+    radial-gradient(circle at 80% 15%, rgba(14, 165, 233, 0.2), transparent 30%),
+    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+}
+
+.input {
+  @apply w-full rounded-lg border border-slate-600/70 bg-slate-900/70 px-4 py-2.5 text-slate-100 placeholder:text-slate-400 outline-none transition duration-200;
+}
+
+.input:focus {
+  @apply border-sky-400 ring-2 ring-sky-400/20;
+}
+
+.btn {
+  @apply inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-sky-500 to-blue-600 px-4 py-2.5 font-semibold text-white shadow-lg shadow-sky-900/30 transition duration-200 hover:from-sky-400 hover:to-blue-500 hover:shadow-sky-700/30 active:scale-[0.99];
+}
