@@ -40,6 +40,8 @@ def list_all_submissions(
             "status": submission.status,
             "badge_id": submission.badge_id,
             "badge_expires_at": submission.badge_expires_at,
+            "badge_generated_at": submission.badge_generated_at,
+            "admin_comment": submission.admin_comment,
         }
         for submission, email in submissions
     ]

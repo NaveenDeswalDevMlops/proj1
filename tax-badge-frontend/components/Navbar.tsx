@@ -15,8 +15,14 @@ export default function Navbar() {
 
     syncAuthState();
     window.addEventListener("storage", syncAuthState);
+    window.addEventListener("focus", syncAuthState);
+    window.addEventListener("auth-changed", syncAuthState);
 
-    return () => window.removeEventListener("storage", syncAuthState);
+    return () => {
+      window.removeEventListener("storage", syncAuthState);
+      window.removeEventListener("focus", syncAuthState);
+      window.removeEventListener("auth-changed", syncAuthState);
+    };
   }, []);
 
   return (
@@ -29,14 +35,14 @@ export default function Navbar() {
               <a href="/dashboard">Dashboard</a>
               <a href="/submit-tax">Submit Tax</a>
               <a href="/download">Download</a>
-              <a href="/admin">Admin</a>
+              <a href="/verify">Verify</a>
+              {admin && <a href="/admin">Admin</a>}
               <a href="/logout">Logout</a>
             </>
           ) : (
             <>
               <a href="/login">Login</a>
               <a href="/signup">Signup</a>
-              <a href="/verify">Verify</a>
             </>
           )}
         </div>
