@@ -30,10 +30,14 @@ class TaxSubmissionResponse(BaseModel):
     badge_id: str | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class AdminSubmissionCreate(BaseModel):
     user_email: EmailStr
     financial_year: str
     tax_paid: int
+
+
+class RejectSubmissionRequest(BaseModel):
+    comment: str

@@ -9,8 +9,10 @@ from app.core.database import get_db
 from app.core.admin import require_admin
 from app.models.submission import TaxSubmission
 from app.models.user import User
-from app.models.schemas import AdminSubmissionCreate
+from app.models.schemas import AdminSubmissionCreate, RejectSubmissionRequest
 from app.services.badge_service import get_badge_for_tax
+from app.services.badge_generator import generate_badge
+from app.services.badge_pdf import generate_badge_pdf
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
