@@ -29,14 +29,14 @@ export default function Navbar() {
               <a href="/dashboard">Dashboard</a>
               <a href="/submit-tax">Submit Tax</a>
               <a href="/download">Download</a>
-              <a href="/verify">Verify</a>
-              {admin && <a href="/admin">Admin</a>}
+              <a href="/admin">Admin</a>
               <a href="/logout">Logout</a>
             </>
           ) : (
             <>
               <a href="/login">Login</a>
               <a href="/signup">Signup</a>
+              <a href="/verify">Verify</a>
             </>
           )}
         </div>

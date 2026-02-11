@@ -28,15 +28,12 @@ class TaxSubmissionResponse(BaseModel):
     badge_name: str | None
     status: str
     badge_id: str | None = None
-    badge_expires_at: date | None = None
-    admin_comment: str | None = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 class AdminSubmissionCreate(BaseModel):
     user_email: EmailStr
     financial_year: str
     tax_paid: int
-
