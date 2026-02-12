@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Disclaimer from "@/components/Disclaimer";
+import QuickInsights from "@/components/QuickInsights";
 
 const toNumber = (value: string) => Number.parseFloat(value) || 0;
 
@@ -12,6 +14,8 @@ const formatINR = (value: number) =>
   }).format(Number.isFinite(value) ? value : 0);
 
 export default function Home() {
+  const [hasToken, setHasToken] = useState(false);
+
   const [emiLoanAmount, setEmiLoanAmount] = useState("500000");
   const [emiRate, setEmiRate] = useState("9");
   const [emiTenureYears, setEmiTenureYears] = useState("5");
@@ -26,6 +30,10 @@ export default function Home() {
 
   const [annualIncome, setAnnualIncome] = useState("1200000");
   const [deductions, setDeductions] = useState("150000");
+
+  useEffect(() => {
+    setHasToken(Boolean(localStorage.getItem("token")));
+  }, []);
 
   const emiResult = useMemo(() => {
     const principal = toNumber(emiLoanAmount);
@@ -122,16 +130,16 @@ export default function Home() {
   return (
     <section className="mx-auto my-12 max-w-6xl px-4">
       <div className="text-center">
-        <h1 className="text-5xl font-bold mb-6">🇮🇳 Nation Builder Badge</h1>
-        <p className="text-slate-400 text-xl max-w-2xl mx-auto">
+        <h1 className="mb-6 text-5xl font-bold">🇮🇳 Nation Builder Badge</h1>
+        <p className="mx-auto max-w-2xl text-xl text-slate-400">
           A civic recognition for Indian taxpayers who contribute to building the nation.
         </p>
 
         <div className="mt-10 flex justify-center gap-6">
-          <a href="/signup" className="px-6 py-3 bg-yellow-400 text-black font-semibold rounded-lg">
+          <a href="/signup" className="rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-black">
             Get Started
           </a>
-          <a href="/login?next=%2Fverify" className="px-6 py-3 border border-slate-700 rounded-lg">
+          <a href="/login?next=%2Fverify" className="rounded-lg border border-slate-700 px-6 py-3">
             Verify Badge
           </a>
         </div>
@@ -140,7 +148,7 @@ export default function Home() {
       <div className="mt-14 grid gap-6 lg:grid-cols-2">
         <article className="rounded-2xl border border-yellow-500/50 bg-slate-950 p-6">
           <h2 className="text-2xl font-semibold">EMI Calculator</h2>
-          <p className="mt-1 text-yellow-300 font-medium">Plan before you borrow.</p>
+          <p className="mt-1 font-medium text-yellow-300">Plan before you borrow.</p>
           <p className="mt-1 text-sm text-slate-400">Top priority: understand your monthly commitment before taking a loan.</p>
 
           <div className="mt-4 space-y-3">
@@ -155,7 +163,7 @@ export default function Home() {
             </label>
           </div>
 
-          <div className="mt-5 rounded-xl bg-slate-900 p-4 text-sm space-y-1">
+          <div className="mt-5 space-y-1 rounded-xl bg-slate-900 p-4 text-sm">
             <p>EMI: <span className="font-semibold">{formatINR(emiResult.emi)}</span></p>
             <p>Total Interest: <span className="font-semibold">{formatINR(emiResult.totalInterest)}</span></p>
             <p>Total Payable: <span className="font-semibold">{formatINR(emiResult.totalPayable)}</span></p>
@@ -178,7 +186,7 @@ export default function Home() {
             </label>
           </div>
 
-          <div className="mt-5 rounded-xl bg-slate-900 p-4 text-sm space-y-1">
+          <div className="mt-5 space-y-1 rounded-xl bg-slate-900 p-4 text-sm">
             <p>Maturity Amount: <span className="font-semibold">{formatINR(fdResult.maturityAmount)}</span></p>
             <p>Interest Earned: <span className="font-semibold">{formatINR(fdResult.interestEarned)}</span></p>
           </div>
@@ -200,7 +208,7 @@ export default function Home() {
             </label>
           </div>
 
-          <div className="mt-5 rounded-xl bg-slate-900 p-4 text-sm space-y-1">
+          <div className="mt-5 space-y-1 rounded-xl bg-slate-900 p-4 text-sm">
             <p>Total Investment: <span className="font-semibold">{formatINR(rdResult.totalInvestment)}</span></p>
             <p>Maturity Value: <span className="font-semibold">{formatINR(rdResult.maturityValue)}</span></p>
           </div>
@@ -219,16 +227,25 @@ export default function Home() {
             </label>
           </div>
 
-          <div className="mt-5 rounded-xl bg-slate-900 p-4 text-sm space-y-1">
+          <div className="mt-5 space-y-1 rounded-xl bg-slate-900 p-4 text-sm">
             <p>Estimated Tax Payable: <span className="font-semibold">{formatINR(taxResult.estimatedTaxPayable)}</span></p>
             <p>Tax Saved: <span className="font-semibold">{formatINR(taxResult.taxSaved)}</span></p>
           </div>
 
-          <a href="/signup" className="mt-5 inline-block rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-black">
-            Already paid your taxes? Claim your Nation Builder Badge.
-          </a>
+          <div className="mt-5 rounded-xl border border-emerald-400/40 bg-emerald-400/10 p-3 text-sm text-emerald-100">
+            {hasToken ? (
+              <p>Already paid your taxes? Claim your Nation Builder Badge.</p>
+            ) : (
+              <a href="/signup" className="font-semibold underline underline-offset-2">
+                Already paid your taxes? Claim your Nation Builder Badge.
+              </a>
+            )}
+          </div>
         </article>
       </div>
+
+      <QuickInsights />
+      <Disclaimer />
     </section>
   );
 }

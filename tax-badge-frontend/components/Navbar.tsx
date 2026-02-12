@@ -36,6 +36,7 @@ export default function Navbar() {
               <a href="/submit-tax">Submit Tax</a>
               <a href="/download">Download</a>
               <a href="/verify">Verify</a>
+              <a href="/rates-comparison">Compare Rates</a>
               {admin && <a href="/admin">Admin</a>}
               <a href="/logout">Logout</a>
             </>
@@ -43,6 +44,7 @@ export default function Navbar() {
             <>
               <a href="/login">Login</a>
               <a href="/signup">Signup</a>
+              <a href="/rates-comparison">Compare Rates</a>
             </>
           )}
         </div>
