@@ -185,7 +185,7 @@ export default function Home() {
         </article>
 
         <article className="rounded-2xl border border-slate-800 bg-slate-950 p-6">
-          <h2 className="text-2xl font-semibold">📆 RD Calculator</h2>
+          <h2 className="text-2xl font-semibold"> RD Calculator</h2>
           <p className="mt-1 text-sm text-slate-400">Designed for salaried users building a monthly savings habit.</p>
 
           <div className="mt-4 space-y-3">
@@ -207,7 +207,7 @@ export default function Home() {
         </article>
 
         <article className="rounded-2xl border border-emerald-500/50 bg-slate-950 p-6">
-          <h2 className="text-2xl font-semibold">🔥 Tax Saver Calculator</h2>
+          <h2 className="text-2xl font-semibold"> Tax Saver Calculator</h2>
           <p className="mt-1 text-sm text-slate-400">Strong match for your badge mission—help users see immediate savings.</p>
 
           <div className="mt-4 space-y-3">
